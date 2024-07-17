@@ -6,7 +6,6 @@ import { Swapi } from "../../api/swapi.js";
 import { PaginatedResponse } from "../../domain/paginatedResponse.js";
 import { ItemLink } from "../../domain/itemLink.js";
 
-
 describe('get all people', () => {
     it('should return all people', async () => {
         const response = await Swapi.people().tryGetAll();
@@ -111,11 +110,7 @@ describe('get all people', () => {
             assert.strictEqual(people[i].properties.name.includes(searchName), true);
         }
     });
-
-
-
 });
-
 
 
 

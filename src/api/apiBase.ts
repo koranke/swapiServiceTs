@@ -29,6 +29,7 @@ export class ApiBase<T> {
     }
 
     async get(endpoint: string): Promise<Response> {
+        this.configureRequest();
         return fetch(this.getEndpointWithQueryParams(endpoint), {
             method: 'GET',
             headers: this.headers
@@ -36,6 +37,7 @@ export class ApiBase<T> {
     }
 
     async post(endpoint: string, body: any): Promise<Response> {
+        this.configureRequest();
         return fetch(this.getEndpointWithQueryParams(endpoint), {
             method: 'POST',
             headers: this.headers,

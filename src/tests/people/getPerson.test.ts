@@ -28,7 +28,6 @@ describe('get person by id', () => {
 async function runInvalidIdTest(id: string): Promise<void> {
         const response = await Swapi.people().tryGetById(id);
         assert.strictEqual(response.status, 404);
-        const data = await response.json();
-        const responseText: Message = JSON.parse(data) as Message;
-        assert.strictEqual(responseText, 'not found');
+        const data: Message = await response.json() as Message;
+        assert.strictEqual(data.message, 'not found');
 }
