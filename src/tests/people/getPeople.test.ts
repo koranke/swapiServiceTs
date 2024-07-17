@@ -9,12 +9,11 @@ import { ItemLink } from "../../domain/itemLink.js";
 describe('get all people', () => {
     it('should return all people', async () => {
         const response = await Swapi.people().tryGetAll();
-        if (response !== null) {
-            assert.strictEqual(response.status, 200);
-            const data = await response.json();
-            const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
-            assert.strictEqual(paginatedResponse.results.length, 10);
-        }
+
+        assert.strictEqual(response.status, 200);
+        const data = await response.json();
+        const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
+        assert.strictEqual(paginatedResponse.results.length, 10);
     });
 
     it('should return page two when requesting page two', async () => {
@@ -25,18 +24,16 @@ describe('get all people', () => {
             .withQueryParam('page', '2')
             .tryGetAll();
 
-            if (response !== null) {
-            assert.strictEqual(response.status, 200);
-            const data = await response.json();
-            const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
-            assert.strictEqual(paginatedResponse.results.length, 10);
-            assert.strictEqual(paginatedResponse.message, 'ok');
-            assert.strictEqual(paginatedResponse.previous, 'https://swapi.tech/api/people?page=1&limit=10');
-            assert.strictEqual(paginatedResponse.next, 'https://swapi.tech/api/people?page=3&limit=10');
-            const pageTwoResults: Set<string> = new Set(paginatedResponse.results.map((itemLink: ItemLink) => itemLink.uid));
-            const commonElements = new Set([...pageOneResults].filter((x) => pageTwoResults.has(x)));
-            assert.strictEqual(commonElements.size, 0);
-        }
+        assert.strictEqual(response.status, 200);
+        const data = await response.json();
+        const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
+        assert.strictEqual(paginatedResponse.results.length, 10);
+        assert.strictEqual(paginatedResponse.message, 'ok');
+        assert.strictEqual(paginatedResponse.previous, 'https://swapi.tech/api/people?page=1&limit=10');
+        assert.strictEqual(paginatedResponse.next, 'https://swapi.tech/api/people?page=3&limit=10');
+        const pageTwoResults: Set<string> = new Set(paginatedResponse.results.map((itemLink: ItemLink) => itemLink.uid));
+        const commonElements = new Set([...pageOneResults].filter((x) => pageTwoResults.has(x)));
+        assert.strictEqual(commonElements.size, 0);
     });
 
     it('should get custom limit and page', async () => {
@@ -44,15 +41,14 @@ describe('get all people', () => {
             .withQueryParam('limit', '5')
             .withQueryParam('page', '2')
             .tryGetAll();
-        if (response !== null) {
-            assert.strictEqual(response.status, 200);
-            const data = await response.json();
-            const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
-            assert.strictEqual(paginatedResponse.results.length, 5);
-            assert.strictEqual(paginatedResponse.message, 'ok');
-            assert.strictEqual(paginatedResponse.previous, 'https://swapi.tech/api/people?page=1&limit=5');
-            assert.strictEqual(paginatedResponse.next, 'https://swapi.tech/api/people?page=3&limit=5');
-        }
+
+        assert.strictEqual(response.status, 200);
+        const data = await response.json();
+        const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
+        assert.strictEqual(paginatedResponse.results.length, 5);
+        assert.strictEqual(paginatedResponse.message, 'ok');
+        assert.strictEqual(paginatedResponse.previous, 'https://swapi.tech/api/people?page=1&limit=5');
+        assert.strictEqual(paginatedResponse.next, 'https://swapi.tech/api/people?page=3&limit=5');
     });
 
     it('should get last page when requesting last page', async () => {
@@ -60,29 +56,28 @@ describe('get all people', () => {
             .withQueryParam('limit', '10')
             .getAll();
 
-        let lastPageNumber: number = Math.ceil(pageOne.total_pages);
+        let lastPageNumber: number = pageOne.total_pages;
         const priorPageResults: Set<string> = await getPageIds((lastPageNumber - 1).toString());
 
         const response = await Swapi.people()
             .withQueryParam('limit', '10')
             .withQueryParam('page', lastPageNumber.toString())
             .tryGetAll();
-        if (response !== null) {
-            assert.strictEqual(response.status, 200);
-            const data = await response.json();
-            const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
-            assert.strictEqual(paginatedResponse.message, 'ok');
-            assert.strictEqual(paginatedResponse.previous, `https://swapi.tech/api/people?page=${lastPageNumber - 1}&limit=10`);
-            assert.strictEqual(paginatedResponse.next, null);
 
-            const lastPageResults: Set<string> = new Set(paginatedResponse.results.map((itemLink: ItemLink) => itemLink.uid));
-            const commonElements = new Set([...priorPageResults].filter((x) => lastPageResults.has(x)));
-            assert.strictEqual(commonElements.size, 0);
-        } else {
-            assert.fail('response is null');
-        }
+        assert.strictEqual(response.status, 200);
+        const data = await response.json();
+        const paginatedResponse: PaginatedResponse = JSON.parse(JSON.stringify(data)) as PaginatedResponse;
+        assert.strictEqual(paginatedResponse.message, 'ok');
+        assert.strictEqual(paginatedResponse.previous, `https://swapi.tech/api/people?page=${lastPageNumber - 1}&limit=10`);
+        assert.strictEqual(paginatedResponse.next, null);
+
+        const lastPageResults: Set<string> = new Set(paginatedResponse.results.map((itemLink: ItemLink) => itemLink.uid));
+        const commonElements = new Set([...priorPageResults].filter((x) => lastPageResults.has(x)));
+        assert.strictEqual(commonElements.size, 0);
     });
+});
 
+describe('get filtered people', () => {
     it('should return single item when searching by exact match name', async () => {
         let searchName: string = 'Luke Skywalker';
         const people: Result<Person>[] = await Swapi.people()

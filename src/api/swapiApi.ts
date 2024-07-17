@@ -12,7 +12,7 @@ export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
     }
 
     async tryGetAll(): Promise<Response> {
-        return this.get('');
+        return await this.get('');
     }
 
     async getAll(): Promise<PaginatedResponse> {
@@ -37,14 +37,14 @@ export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
                 let result: string = JSON.stringify(data.result);
                 return JSON.parse(result) as Result<T>[];
             }
-            assert.fail('Response not ok');
+            assert.fail('Response not ok.' + response.status + ' ' + response.statusText);
         } catch (error) {
             assert.fail('Error occurred' + error);
         }
     }
 
     async tryGetById(id: string): Promise<Response> {
-        return this.get(id);
+        return await this.get(id);
     }
 
     async getById(id: string): Promise<Result<T>> {
@@ -55,7 +55,7 @@ export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
                 let result: string = JSON.stringify(data.result);
                 return JSON.parse(result) as Result<T>;
             }
-            assert.fail('Response not ok');
+            assert.fail('Response not ok.' + response.status + ' ' + response.statusText);
         } catch (error) {
             assert.fail('Error occurred' + error);
         }
