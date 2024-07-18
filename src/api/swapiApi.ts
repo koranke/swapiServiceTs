@@ -7,7 +7,7 @@ import assert from 'assert';
 export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
     constructor(endpoint: string) {
         super();
-        this.baseUrl = BASE_SWAPI_URL + endpoint + '/';
+        this.baseUrl = `${BASE_SWAPI_URL + endpoint}/`;
         this.contentType = 'application/json';
     }
 

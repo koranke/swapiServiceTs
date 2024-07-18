@@ -1,9 +1,13 @@
+import { AuthType } from "../core/authType";
 
 export class ApiBase<T> {
     baseUrl: String;
     headers: Headers;
     queryParams: URLSearchParams;
     contentType: string;
+    accept: string;
+    authorization: string;
+    authtype: AuthType;
 
     withHeader(key: string, value: string): T {
         if (this.headers == null) {
@@ -21,6 +25,21 @@ export class ApiBase<T> {
         return this as unknown as T;
     }
 
+    withAuthorization(token: string): T {
+        this.authorization = token;
+        return this as unknown as T;
+    }
+
+    withContentType(contentType: string): T {
+        this.contentType = contentType;
+        return this as unknown as T;
+    }
+
+    withAccept(accept: string): T {
+        this.accept = accept;
+        return this as unknown as T;
+    }
+
     getEndpointWithQueryParams(endpoint: string): string {
         if (this.queryParams == null || this.queryParams.toString() === '') {
             return `${this.baseUrl}${endpoint}`;
@@ -29,26 +48,65 @@ export class ApiBase<T> {
     }
 
     async get(endpoint: string): Promise<Response> {
-        this.configureRequest();
-        return fetch(this.getEndpointWithQueryParams(endpoint), {
-            method: 'GET',
-            headers: this.headers
-        });
+        return this.runRequest('GET', endpoint, null);
     }
 
     async post(endpoint: string, body: any): Promise<Response> {
+        return this.runRequest('POST', endpoint, body);
+    }
+
+    async put(endpoint: string, body: any): Promise<Response> {
+        return this.runRequest('PUT', endpoint, body);
+    }
+
+    async delete(endpoint: string): Promise<Response> {
+        return this.runRequest('DELETE', endpoint, null);
+    }
+
+    async runRequest(method: string, endpoint: string, body: any): Promise<Response> {
         this.configureRequest();
-        return fetch(this.getEndpointWithQueryParams(endpoint), {
-            method: 'POST',
+        let fullUrl: string = this.getEndpointWithQueryParams(endpoint);
+        this.logRequestDetails(method, fullUrl, body);
+        const response = await fetch(fullUrl, {
+            method: method,
             headers: this.headers,
-            body: JSON.stringify(body)
+            ...(body !== null ? { body: JSON.stringify(body) } : {})
         });
+
+        this.logResponseDetails(response);
+        return response;
     }
 
     configureRequest(): void {
         if (this.contentType) {
             this.withHeader('Content-Type', this.contentType);
         }
+        if (this.accept) {
+            this.withHeader('Accept', this.accept);
+        }
+        if (this.authorization && this.authtype) {
+            this.withHeader('Authorization', `${this.authtype} ${this.authorization}`);
+        }
     }
 
+    logRequestDetails(method: string, endpoint: string, body: any): void {
+        console.log('\nRequest Details:');
+        console.log(`method: ${method}`);
+        console.log(`endpoint: ${endpoint}`);
+        console.log(`headers: ${this.headers.forEach((value, name) => `${name}: ${value}`)}`);
+        console.log(`queryParams: ${this.queryParams}`);
+        if (body) {
+            console.log(`body: ${body}`);
+        }
+    }
+
+    logResponseDetails(response: Response): void {
+        console.log('\nResponse Details:');
+        console.log(`status: ${response.status}`);
+        console.log(`statusText: ${response.statusText}`);
+        console.log(`headers: ${response.headers.forEach((value, name) => `${name}: ${value}`)}`);
+        if (response.body) {
+            console.log(`body: ${response.body}`);
+        }
+    }
 }
