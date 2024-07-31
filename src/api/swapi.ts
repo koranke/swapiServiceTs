@@ -3,11 +3,11 @@ import { PlanetApi } from "./planetApi.js";
 
 export class Swapi {
 
-    static people(): PersonApi {
+    static get people(): PersonApi {
         return new PersonApi();
     }
 
-    static planets(): PlanetApi {
+    static get planets(): PlanetApi {
         return new PlanetApi();
     }
 }

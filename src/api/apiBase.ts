@@ -1,7 +1,7 @@
 import { AuthType } from "../core/authType";
 
 export class ApiBase<T> {
-    baseUrl: String;
+    baseUrl: string;
     headers: Headers;
     queryParams: URLSearchParams;
     contentType: string;
@@ -65,7 +65,7 @@ export class ApiBase<T> {
 
     async runRequest(method: string, endpoint: string, body: any): Promise<Response> {
         this.configureRequest();
-        let fullUrl: string = this.getEndpointWithQueryParams(endpoint);
+        const fullUrl: string = this.getEndpointWithQueryParams(endpoint);
         this.logRequestDetails(method, fullUrl, body);
         const response = await fetch(fullUrl, {
             method: method,

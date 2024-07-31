@@ -34,7 +34,7 @@ export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
             const response = await this.tryGetAll();
             if (response.ok) {
                 const data = await response.json();
-                let result: string = JSON.stringify(data.result);
+                const result: string = JSON.stringify(data.result);
                 return JSON.parse(result) as Result<T>[];
             }
             assert.fail('Response not ok.' + response.status + ' ' + response.statusText);
@@ -52,7 +52,7 @@ export class SwapiApi<T> extends ApiBase<SwapiApi<T>> {
             const response = await this.tryGetById(id);
             if (response.ok) {
                 const data = await response.json();
-                let result: string = JSON.stringify(data.result);
+                const result: string = JSON.stringify(data.result);
                 return JSON.parse(result) as Result<T>;
             }
             assert.fail('Response not ok.' + response.status + ' ' + response.statusText);

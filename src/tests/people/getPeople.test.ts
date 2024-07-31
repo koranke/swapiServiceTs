@@ -8,7 +8,7 @@ import { ItemLink } from "../../domain/itemLink.js";
 
 describe('get all people', () => {
     it('should return all people', async () => {
-        const response = await Swapi.people().tryGetAll();
+        const response = await Swapi.people.tryGetAll();
 
         assert.strictEqual(response.status, 200);
         const data = await response.json();
@@ -19,7 +19,7 @@ describe('get all people', () => {
     it('should return page two when requesting page two', async () => {
         const pageOneResults: Set<string> = await getPageIds('1');
 
-        const response = await Swapi.people()
+        const response = await Swapi.people
             .withQueryParam('limit', '10')
             .withQueryParam('page', '2')
             .tryGetAll();
@@ -37,7 +37,7 @@ describe('get all people', () => {
     });
 
     it('should get custom limit and page', async () => {
-        const response = await Swapi.people()
+        const response = await Swapi.people
             .withQueryParam('limit', '5')
             .withQueryParam('page', '2')
             .tryGetAll();
@@ -52,14 +52,14 @@ describe('get all people', () => {
     });
 
     it('should get last page when requesting last page', async () => {
-        const pageOne: PaginatedResponse = await Swapi.people()
+        const pageOne: PaginatedResponse = await Swapi.people
             .withQueryParam('limit', '10')
             .getAll();
 
-        let lastPageNumber: number = pageOne.total_pages;
+        const lastPageNumber: number = pageOne.total_pages;
         const priorPageResults: Set<string> = await getPageIds((lastPageNumber - 1).toString());
 
-        const response = await Swapi.people()
+        const response = await Swapi.people
             .withQueryParam('limit', '10')
             .withQueryParam('page', lastPageNumber.toString())
             .tryGetAll();
@@ -79,8 +79,8 @@ describe('get all people', () => {
 
 describe('get filtered people', () => {
     it('should return single item when searching by exact match name', async () => {
-        let searchName: string = 'Luke Skywalker';
-        const people: Result<Person>[] = await Swapi.people()
+        const searchName: string = 'Luke Skywalker';
+        const people: Result<Person>[] = await Swapi.people
             .getFiltered('name', searchName);
 
         assert.strictEqual(people.length, 1);
@@ -89,15 +89,15 @@ describe('get filtered people', () => {
     });
 
     it('should return empty list when no name matches', async () => {
-        const people: Result<Person>[] = await Swapi.people()
+        const people: Result<Person>[] = await Swapi.people
             .getFiltered('name', 'The Hulk');
 
         assert.strictEqual(people.length, 0);
     });
 
     it('should return multiple results when there are multiple matches', async () => {
-        let searchName: string = 'Skywalker';
-        const people: Result<Person>[] = await Swapi.people()
+        const searchName: string = 'Skywalker';
+        const people: Result<Person>[] = await Swapi.people
             .getFiltered('name', searchName);
 
         assert.strictEqual(people.length > 1, true);
@@ -110,7 +110,7 @@ describe('get filtered people', () => {
 
 
 async function getPageIds(pageNumber: string): Promise<Set<string>> {
-    const response = await Swapi.people()
+    const response = await Swapi.people
         .withQueryParam('page', pageNumber)
         .withQueryParam('limit', '10')
         .tryGetAll();
