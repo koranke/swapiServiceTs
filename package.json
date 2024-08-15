@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test"
+  },
   "author": "",
   "license": "ISC",
   "description": "",
